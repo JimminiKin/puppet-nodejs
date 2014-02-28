@@ -55,8 +55,15 @@ define nodejs::install (
     /.*64.*/ => 'x64',
     default  => 'x86',
   }
+  
+  
+  if ! defined(Package['tar']) {
+    package { 'tar': ensure => 'present' }
+  }
 
-  ensure_packages([ 'tar', 'curl' ])
+  if ! defined(Package['curl']) {
+    package { 'curl': ensure => 'present' }
+  }
 
   if !defined(Package['semver']){
     package { 'semver':
@@ -135,7 +142,18 @@ define nodejs::install (
   }
 
   if $make_install {
-    ensure_packages([ 'python', $gplusplus_package, 'make' ])
+  
+    if ! defined(Package['python']) {
+      package { 'python': ensure => 'present' }
+    }
+  
+    if ! defined(Package[$gplusplus_package]) {
+      package { $gplusplus_package: ensure => 'present' }
+    }
+  
+    if ! defined(Package['make']) {
+      package { 'make': ensure => 'present' }
+    }
 
     exec { "nodejs-make-install-${node_version}":
       command => "./configure --prefix=${node_unpack_folder} && make && make install",
