@@ -91,6 +91,10 @@ define nodejs::install (
 
   $node_symlink_target = "${node_unpack_folder}/bin/node"
   $node_symlink = "${node_target_dir}/node-${node_version}"
+  $node_symlink_noversion = "${node_target_dir}/node"
+  
+  $npm_symlink_target = "${node_unpack_folder}/bin/npm"
+  $npm_symlink_noversion = "${node_target_dir}/npm"
 
   ensure_resource('file', 'nodejs-install-dir', {
     ensure => 'directory',
@@ -176,6 +180,18 @@ define nodejs::install (
     ensure  => 'link',
     path    => $node_symlink,
     target  => $node_symlink_target,
+  }
+
+  file { "nodejs-symlink-bin-without-version":
+    ensure  => 'link',
+    path    => $node_symlink_noversion,
+    target  => $node_symlink_target,
+  }
+
+  file { "npm-symlink-bin-without-version":
+    ensure  => 'link',
+    path    => $npm_symlink_noversion,
+    target  => $npm_symlink_target,
   }
 
   # automatic installation of npm is introduced since nodejs v0.6.3
